@@ -1,16 +1,34 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  ArrowRight,
-  TrendingUp,
-  MapPin,
-  User,
-  Calendar,
-  Camera,
-} from "lucide-react";
+import { TrendingUp, MapPin, Camera, Calendar } from "lucide-react";
+
+// --- STEP 1: ADD THESE IMPORTS ---
+import { useCampaigns } from "../hooks/useCampaigns"; // To fetch data
+import CampaignCard from "../components/CampaignCard"; // To display data
+
+// --- A simple placeholder component to show while data is loading ---
+const CampaignCardPlaceholder: React.FC = () => (
+    <div className="bg-white rounded-2xl overflow-hidden group">
+        <div className="relative">
+            <div className="w-full h-72 bg-gray-200 rounded-2xl animate-pulse"></div>
+        </div>
+        <div className="pt-4">
+            <div className="h-6 bg-gray-200 rounded w-3/4 mb-3 animate-pulse"></div>
+            <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded w-full animate-pulse"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 animate-pulse"></div>
+            </div>
+        </div>
+    </div>
+);
+
 
 const HomePage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // --- STEP 2: FETCH YOUR CAMPAIGNS FROM SUPABASE ---
+  const { data: campaigns = [], isLoading } = useCampaigns();
 
   const faqData = [
     {
@@ -42,6 +60,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      {/* THIS SECTION IS UNCHANGED */}
       <section className="relative bg-gray-900 overflow-hidden border-b-8 border-gray-100">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -49,7 +68,6 @@ const HomePage: React.FC = () => {
         >
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
         </div>
-        code Code
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="text-white z-10">
@@ -62,7 +80,6 @@ const HomePage: React.FC = () => {
                 Connect photographers, communities, and causes through beautiful
                 imagery. Every download supports the missions that matter most.
               </p>
-
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <Link
                   to="/create-campaign"
@@ -79,7 +96,6 @@ const HomePage: React.FC = () => {
                   <span className="font-bold text-lg">»</span>
                 </Link>
               </div>
-
               <div className="flex flex-wrap gap-3">
                 {[
                   "Family Portrait",
@@ -96,7 +112,6 @@ const HomePage: React.FC = () => {
                 ))}
               </div>
             </div>
-
             <div className="relative h-96 flex items-center justify-center">
               <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform rotate-12 translate-x-12">
                 <img
@@ -105,7 +120,6 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-
               <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform -rotate-12 -translate-x-12">
                 <img
                   src="/images/card-fireworks.png"
@@ -113,7 +127,6 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-
               <div className="absolute w-64 h-80 bg-white rounded-lg shadow-2xl z-10">
                 <img
                   src="/images/card-cat.png"
@@ -121,7 +134,6 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-
               <div className="absolute bg-white p-4 rounded-lg shadow-2xl z-20 w-64 -bottom-16">
                 <p className="text-gray-700 text-sm">
                   We capture precious moments in your life with an artistic and
@@ -135,6 +147,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* THIS SECTION IS UNCHANGED */}
       <section className="py-24" style={{ backgroundColor: "#E9EBED" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -146,7 +159,6 @@ const HomePage: React.FC = () => {
                   that make an impact.
                 </p>
               </div>
-
               <div>
                 <Link
                   to="/create-campaign"
@@ -157,7 +169,6 @@ const HomePage: React.FC = () => {
                 </Link>
               </div>
             </div>
-
             <div>
               <h2
                 className="text-4xl md:text-6xl font-light text-gray-800 mb-8 leading-tight"
@@ -178,6 +189,7 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* --- STEP 3: THIS IS THE ONLY SECTION THAT HAS BEEN MODIFIED --- */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
@@ -195,144 +207,27 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="/images/campaign-gala.png"
-                  alt="Annual Charity Gala"
-                  className="w-full h-72 object-cover rounded-2xl"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                    12 Photos
-                  </span>
-                  <span className="bg-black/30 text-white px-4 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
-                    Education
-                  </span>
-                </div>
-              </div>
-              <div className="pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Annual Charity Gala
-                  </h3>
-                  <div className="flex items-center space-x-1">
-                    <TrendingUp className="w-4 h-4 text-orange-500" />
-                    <span className="text-lg font-bold text-gray-800">
-                      $3,450
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>Downtown Convention Center</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Camera className="w-4 h-4" />
-                    <span>Sarah Johnson Photography</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>2/15/2025</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="/images/campaign-race.png"
-                  alt="Community 5K Race"
-                  className="w-full h-72 object-cover rounded-2xl"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                    10 Photos
-                  </span>
-                  <span className="bg-black/30 text-white px-4 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
-                    Health & Wellness
-                  </span>
-                </div>
-              </div>
-              <div className="pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Community 5K Race
-                  </h3>
-                  <div className="flex items-center space-x-1">
-                    <TrendingUp className="w-4 h-4 text-orange-500" />
-                    <span className="text-lg font-bold text-gray-800">
-                      $3,450
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>Riverside Park</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Camera className="w-4 h-4" />
-                    <span>Mike Chen</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>3/10/2025</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl overflow-hidden group">
-              <div className="relative">
-                <img
-                  src="/images/campaign-pet.png"
-                  alt="Pet Rescue Portrait"
-                  className="w-full h-72 object-cover rounded-2xl"
-                />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="bg-orange-500 text-white px-4 py-1 rounded-full text-xs font-semibold">
-                    14 Photos
-                  </span>
-                </div>
-              </div>
-              <div className="pt-4">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    Pet Rescue Portrait
-                  </h3>
-                  <div className="flex items-center space-x-1">
-                    <TrendingUp className="w-4 h-4 text-orange-500" />
-                    <span className="text-lg font-bold text-gray-800">
-                      $3,450
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2 text-sm text-gray-500 font-medium">
-                  <div className="flex items-center space-x-2">
-                    <MapPin className="w-4 h-4" />
-                    <span>Sunny Acres Animal Shelter</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Camera className="w-4 h-4" />
-                    <span>Emma Rodriguez</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>2/15/2025</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {isLoading ? (
+              // If data is loading, show 3 placeholders
+              <>
+                <CampaignCardPlaceholder />
+                <CampaignCardPlaceholder />
+                <CampaignCardPlaceholder />
+              </>
+            ) : (
+              // Otherwise, show the latest 3 campaigns from the database
+              campaigns.slice(0, 3).map((campaign) => (
+                <CampaignCard key={campaign.id} campaign={campaign} />
+              ))
+            )}
+            {!isLoading && campaigns.length === 0 && (
+              <p className="col-span-3 text-center text-gray-500">No active campaigns found.</p>
+            )}
           </div>
         </div>
       </section>
 
+      {/* ALL SECTIONS BELOW THIS ARE UNCHANGED */}
       <section className="py-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -345,7 +240,6 @@ const HomePage: React.FC = () => {
               images while supporting meaningful causes.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
@@ -359,7 +253,6 @@ const HomePage: React.FC = () => {
                 photographers who care about their craft and community impact.
               </p>
             </div>
-
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-500" />
@@ -372,7 +265,6 @@ const HomePage: React.FC = () => {
                 Every photo download can support the causes you care about most.
               </p>
             </div>
-
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-500" />
@@ -386,7 +278,6 @@ const HomePage: React.FC = () => {
                 causes.
               </p>
             </div>
-
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-500" />
@@ -399,7 +290,6 @@ const HomePage: React.FC = () => {
                 to community 5Ks, mission trips to family celebrations.
               </p>
             </div>
-
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-500" />
@@ -412,7 +302,6 @@ const HomePage: React.FC = () => {
                 for supporters to find and purchase photos from your event.
               </p>
             </div>
-
             <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-lg transition-shadow">
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
                 <TrendingUp className="w-6 h-6 text-orange-500" />
@@ -440,7 +329,6 @@ const HomePage: React.FC = () => {
               GoodPix to create impact.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <img
@@ -465,7 +353,6 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
             </div>
-
             <div>
               <img
                 src="/images/quote-icon.svg"
@@ -489,7 +376,6 @@ const HomePage: React.FC = () => {
                 </div>
               </div>
             </div>
-
             <div>
               <img
                 src="/images/quote-icon.svg"
@@ -528,7 +414,6 @@ const HomePage: React.FC = () => {
               photography fundraising needs.
             </p>
           </div>
-
           <div className="space-y-4">
             {faqData.map((item, index) => (
               <div key={index} className="border-b border-gray-200 pb-4">
@@ -549,7 +434,6 @@ const HomePage: React.FC = () => {
                     </span>
                   </div>
                 </button>
-
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     openFaq === index ? "max-h-96 mt-4" : "max-h-0"
@@ -567,4 +451,5 @@ const HomePage: React.FC = () => {
     </div>
   );
 };
+
 export default HomePage;
