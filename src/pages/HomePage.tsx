@@ -1,12 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { TrendingUp, MapPin, Camera, Calendar } from "lucide-react";
 
-// --- STEP 1: ADD THESE IMPORTS ---
-import { useCampaigns } from "../hooks/useCampaigns"; // To fetch data
-import CampaignCard from "../components/CampaignCard"; // To display data
+import { useCampaigns } from "../hooks/useCampaigns";
+import CampaignCard from "../components/CampaignCard";
 
-// --- A simple placeholder component to show while data is loading ---
 const CampaignCardPlaceholder: React.FC = () => (
     <div className="bg-white rounded-2xl overflow-hidden group">
         <div className="relative">
@@ -23,44 +21,52 @@ const CampaignCardPlaceholder: React.FC = () => (
     </div>
 );
 
-
 const HomePage: React.FC = () => {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  // --- STEP 2: FETCH YOUR CAMPAIGNS FROM SUPABASE ---
   const { data: campaigns = [], isLoading } = useCampaigns();
 
+ 
+  const imageCards = [
+    { 
+      id: 'cat', 
+      src: '/images/card-cat.png', 
+      alt: 'Cat', 
+      text: 'We capture precious moments in your life with an artistic and professional touch. From family portraits to personal photo sessions.' 
+    },
+    { 
+      id: 'fireworks', 
+      src: '/images/card-fireworks.png', 
+      alt: 'Fireworks',
+      text: 'Celebrate your biggest events with vibrant, professional photography that captures the magic of the moment.'
+    },
+    { 
+      id: 'pumpkin', 
+      src: '/images/card-pumpkin.png', 
+      alt: 'Pumpkin',
+      text: 'Create lasting family memories with our fun and festive seasonal photoshoots. Perfect for all ages.'
+    },
+  ];
+
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveIndex((prevIndex) => (prevIndex + 1) % imageCards.length);
+    }, 3000); 
+
+    return () => clearInterval(interval);
+  }, []);
+
   const faqData = [
-    {
-      question: "How does the payment splitting work?",
-      answer:
-        "Our platform uses Stripe Connect to securely and automatically split payments between the photographer and the designated charity. You set the percentages when you create the fundraiser, and we handle the rest.",
-    },
-    {
-      question: "What types of events work best with GoodPix?",
-      answer:
-        "GoodPix is perfect for any event where memories are being made! This includes charity galas, 5K races, community festivals, school functions, mission trips, and even private events like family reunions where guests might want to support a cause.",
-    },
-    {
-      question: "Do I need to be a professional photographer to use this?",
-      answer:
-        "Not at all! While we offer tools for professionals, GoodPix is designed for everyone—from seasoned pros to passionate hobbyists and designated event photographers. As long as you can capture great moments, you can create a successful fundraiser.",
-    },
-    {
-      question: "How do people find and purchase photos?",
-      answer:
-        "Each fundraiser gets a unique, shareable link and a QR code. Organizers can display the QR code at the event for instant access, or share the link via social media and email. Guests can then browse the gallery, select their favorite photos, and complete a secure checkout.",
-    },
-    {
-      question: "Can I make my fundraiser private?",
-      answer:
-        "Yes. When setting up your campaign, you have the option to make it password-protected. This ensures that only attendees with the password can view and purchase the photos, which is ideal for private events like weddings or family gatherings.",
-    },
+      { question: "How does the payment splitting work?", answer: "Our platform uses Stripe Connect..." },
+      { question: "What types of events work best with GoodPix?", answer: "GoodPix is perfect for any event..." },
+      { question: "Do I need to be a professional photographer to use this?", answer: "Not at all!..." },
+      { question: "How do people find and purchase photos?", answer: "Each fundraiser gets a unique, shareable link..." },
+      { question: "Can I make my fundraiser private?", answer: "Yes. When setting up your campaign..." },
   ];
 
   return (
     <div className="min-h-screen bg-white">
-      {/* THIS SECTION IS UNCHANGED */}
       <section className="relative bg-gray-900 overflow-hidden border-b-8 border-gray-100">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -112,42 +118,60 @@ const HomePage: React.FC = () => {
                 ))}
               </div>
             </div>
-            <div className="relative h-96 flex items-center justify-center">
-              <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform rotate-12 translate-x-12">
-                <img
-                  src="/images/card-pumpkin.png"
-                  alt="Pumpkin"
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform -rotate-12 -translate-x-12">
-                <img
-                  src="/images/card-fireworks.png"
-                  alt="Fireworks"
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="absolute w-64 h-80 bg-white rounded-lg shadow-2xl z-10">
-                <img
-                  src="/images/card-cat.png"
-                  alt="Cat"
-                  className="w-full h-full object-cover rounded-lg"
-                />
-              </div>
-              <div className="absolute bg-white p-4 rounded-lg shadow-2xl z-20 w-64 -bottom-16">
-                <p className="text-gray-700 text-sm">
-                  We capture precious moments in your life with an artistic and
-                  professional touch. From family portraits to personal photo
-                  sessions, we ensure every shot is a work of art that tells
-                  your story.
-                </p>
+
+            <div className="relative h-96 w-full flex items-center justify-center group [perspective:1000px]">
+              <div className="relative w-72 h-96 transition-transform duration-700" style={{ transformStyle: 'preserve-3d' }}>
+                {imageCards.map((card, index) => {
+                  const isFront = index === activeIndex;
+                  const isRight = (activeIndex + 1) % imageCards.length === index;
+                  const isLeft = (activeIndex - 1 + imageCards.length) % imageCards.length === index;
+
+                  let transform = 'scale(0.8)';
+                  let zIndex = 1;
+                  let opacity = 0;
+
+                  if (isFront) {
+                    transform = 'translateZ(0px) scale(1)';
+                    zIndex = 3;
+                    opacity = 1;
+                  } else if (isRight) {
+                    transform = 'translateX(40%) scale(0.9) translateZ(-50px)';
+                    zIndex = 2;
+                    opacity = 1;
+                  } else if (isLeft) {
+                    transform = 'translateX(-40%) scale(0.9) translateZ(-50px)';
+                    zIndex = 1;
+                    opacity = 1;
+                  }
+
+                  const styles = { transform, zIndex, opacity };
+
+                  return (
+                    <div
+                      key={card.id}
+                      className="absolute top-0 left-0 w-full h-full rounded-2xl shadow-2xl transition-all duration-500 ease-in-out overflow-hidden"
+                      style={styles}
+                    >
+                      <img
+                        src={card.src}
+                        alt={card.alt}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute bottom-0 w-full bg-white p-4">
+                        <p className="text-gray-700 text-sm">
+                          {card.text}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
+            
           </div>
         </div>
       </section>
 
-      {/* THIS SECTION IS UNCHANGED */}
       <section className="py-24" style={{ backgroundColor: "#E9EBED" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
@@ -216,12 +240,16 @@ const HomePage: React.FC = () => {
               </>
             ) : (
               // Otherwise, show the latest 3 campaigns from the database
-              campaigns.slice(0, 3).map((campaign) => (
-                <CampaignCard key={campaign.id} campaign={campaign} />
-              ))
+              campaigns
+                .slice(0, 3)
+                .map((campaign) => (
+                  <CampaignCard key={campaign.id} campaign={campaign} />
+                ))
             )}
             {!isLoading && campaigns.length === 0 && (
-              <p className="col-span-3 text-center text-gray-500">No active campaigns found.</p>
+              <p className="col-span-3 text-center text-gray-500">
+                No active campaigns found.
+              </p>
             )}
           </div>
         </div>

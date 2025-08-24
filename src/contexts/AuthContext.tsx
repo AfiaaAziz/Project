@@ -223,20 +223,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
 
-      if (error && error.message !== 'Auth session missing!') {
+      if (error && error.message !== "Auth session missing!") {
         throw error;
       }
 
-    
       setUser(null);
       setProfile(null);
       setSession(null);
-
     } catch (error: any) {
       // This will now only catch REAL sign-out errors
       toast.error("Failed to sign out.");
