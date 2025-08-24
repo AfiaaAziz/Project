@@ -61,7 +61,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const getInitialSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         setSession(session);
         setUser(session?.user ?? null);
       } catch (error) {
@@ -76,7 +78,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   // Set up auth state change listener (sync callback only)
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
     });
@@ -143,7 +147,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setProfile(profileData);
     }
   };
-
+  // Replace the current signUp function with this original version
   const signUp = async (
     email: string,
     password: string,
@@ -170,7 +174,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       return { data: null, error };
     }
   };
-
   const signIn = async (email: string, password: string) => {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({

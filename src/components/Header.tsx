@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react"; 
-import { Link, useNavigate, useSearchParams } from "react-router-dom"; 
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Search, ChevronDown, Menu, X, ShoppingCart } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 
 const Header: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams(); 
+  const [searchParams] = useSearchParams();
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -27,7 +27,7 @@ const Header: React.FC = () => {
     e.preventDefault();
     if (searchTerm.trim()) {
       navigate(`/browse?search=${encodeURIComponent(searchTerm.trim())}`);
-      setShowMobileMenu(false); 
+      setShowMobileMenu(false);
     } else {
       navigate("/browse");
     }

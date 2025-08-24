@@ -43,7 +43,6 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       <section className="relative bg-gray-900 overflow-hidden border-b-8 border-gray-100">
-  
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: "url(/images/bg.png)" }}
@@ -53,7 +52,6 @@ const HomePage: React.FC = () => {
         code Code
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-           
             <div className="text-white z-10">
               <h1 className="text-1xl md:text-6xl font-bold leading-tight mb-6 text-shadow">
                 Turn Photos
@@ -65,7 +63,6 @@ const HomePage: React.FC = () => {
                 imagery. Every download supports the missions that matter most.
               </p>
 
-             
               <div className="flex flex-col sm:flex-row gap-4 mb-10">
                 <Link
                   to="/create-campaign"
@@ -83,7 +80,6 @@ const HomePage: React.FC = () => {
                 </Link>
               </div>
 
-              
               <div className="flex flex-wrap gap-3">
                 {[
                   "Family Portrait",
@@ -101,9 +97,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-           
             <div className="relative h-96 flex items-center justify-center">
-              
               <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform rotate-12 translate-x-12">
                 <img
                   src="/images/card-pumpkin.png"
@@ -111,7 +105,7 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-            
+
               <div className="absolute w-60 h-80 bg-white rounded-lg shadow-2xl transform -rotate-12 -translate-x-12">
                 <img
                   src="/images/card-fireworks.png"
@@ -119,7 +113,7 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-              
+
               <div className="absolute w-64 h-80 bg-white rounded-lg shadow-2xl z-10">
                 <img
                   src="/images/card-cat.png"
@@ -127,7 +121,7 @@ const HomePage: React.FC = () => {
                   className="w-full h-full object-cover rounded-lg"
                 />
               </div>
-            
+
               <div className="absolute bg-white p-4 rounded-lg shadow-2xl z-20 w-64 -bottom-16">
                 <p className="text-gray-700 text-sm">
                   We capture precious moments in your life with an artistic and
@@ -140,14 +134,11 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-      
+
       <section className="py-24" style={{ backgroundColor: "#E9EBED" }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          
             <div className="flex flex-col justify-between">
-          
               <div className="pt-4">
                 <p className="text-gray-700 text-lg leading-relaxed max-w-md">
                   Showcase your brand with high-quality, custom photos. Create a
@@ -156,7 +147,6 @@ const HomePage: React.FC = () => {
                 </p>
               </div>
 
-          
               <div>
                 <Link
                   to="/create-campaign"
@@ -168,7 +158,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-      
             <div>
               <h2
                 className="text-4xl md:text-6xl font-light text-gray-800 mb-8 leading-tight"
@@ -179,7 +168,7 @@ const HomePage: React.FC = () => {
               </h2>
               <div className="relative">
                 <img
-                  src="/images/campaign-image.png" 
+                  src="/images/campaign-image.png"
                   alt="Photographers at sunset"
                   className="rounded-2xl shadow-xl w-full h-auto object-cover"
                 />
@@ -189,7 +178,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
@@ -207,7 +195,6 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          
             <div className="bg-white rounded-2xl overflow-hidden group">
               <div className="relative">
                 <img
@@ -254,7 +241,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-        
             <div className="bg-white rounded-2xl overflow-hidden group">
               <div className="relative">
                 <img
@@ -301,7 +287,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-        
             <div className="bg-white rounded-2xl overflow-hidden group">
               <div className="relative">
                 <img
@@ -347,7 +332,7 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-  
+
       <section className="py-20 bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -444,7 +429,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-     
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -458,7 +442,6 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-          
             <div>
               <img
                 src="/images/quote-icon.svg"
@@ -483,7 +466,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-          
             <div>
               <img
                 src="/images/quote-icon.svg"
@@ -508,7 +490,6 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-          
             <div>
               <img
                 src="/images/quote-icon.svg"
@@ -536,7 +517,6 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      
       <section className="py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -569,7 +549,7 @@ const HomePage: React.FC = () => {
                     </span>
                   </div>
                 </button>
-               
+
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out ${
                     openFaq === index ? "max-h-96 mt-4" : "max-h-0"
@@ -584,7 +564,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-    
     </div>
   );
 };

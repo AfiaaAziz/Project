@@ -19,7 +19,6 @@ const AuthCallback: React.FC = () => {
         }
 
         if (data.session) {
-          
           const { data: profile, error: profileError } = await supabase
             .from("profiles")
             .select("*")
@@ -27,7 +26,6 @@ const AuthCallback: React.FC = () => {
             .single();
 
           if (profileError && profileError.code === "PGRST116") {
-            
             const { error: createError } = await supabase
               .from("profiles")
               .insert({
@@ -41,7 +39,7 @@ const AuthCallback: React.FC = () => {
                   data.session.user.user_metadata?.avatar_url ||
                   data.session.user.user_metadata?.picture ||
                   null,
-                role: "organizer", 
+                role: "organizer",
               });
 
             if (createError) {
@@ -49,7 +47,6 @@ const AuthCallback: React.FC = () => {
             }
           }
 
-        
           navigate("/dashboard");
         } else {
           navigate("/auth");
