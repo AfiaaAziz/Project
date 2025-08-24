@@ -1,6 +1,5 @@
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Chrome } from "lucide-react";
 
 interface GoogleSignInButtonProps {
   mode: "signin" | "signup";
