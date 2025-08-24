@@ -290,3 +290,48 @@ export const useUserCampaigns = (userId?: string) => {
     refetchOnWindowFocus: false,
   });
 };
+
+
+
+export const useCreateComment = () => {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({
+      campaignId,
+      content,
+    }: {
+      campaignId: string;
+      content: string;
+    }) => {
+      if (!user) throw new Error("You must be logged in to comment.");
+      if (!content.trim()) throw new Error("Comment cannot be empty.");
+
+      const newComment = {
+        campaign_id: campaignId,
+        user_id: user.id,
+        content: content.trim(),
+      };
+
+      const { data, error } = await supabase
+        .from("comments")
+        .insert(newComment)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      
+      queryClient.invalidateQueries({ queryKey: ["campaign", data.campaign_id] });
+      toast.success("Comment posted!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to post comment.");
+    },
+  });
+};

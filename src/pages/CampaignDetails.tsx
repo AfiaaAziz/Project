@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MapPin, User, Calendar, Download, Share2 } from "lucide-react";
+import CampaignComments from "../components/CampaignComments";
 
 import LoadingSpinner from "../components/LoadingSpinner";
 import PaymentModal from "../components/PaymentModal";
@@ -12,18 +13,15 @@ const CampaignDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { data: campaign, isLoading } = useCampaign(id!);
 
- 
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([]);
   const [additionalDonation, setAdditionalDonation] = useState("");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-  
   useEffect(() => {
     if (id) {
       supabase.rpc("increment_page_view", { campaign_id_to_update: id });
     }
   }, [id]);
-
 
   if (isLoading) {
     return (
@@ -41,7 +39,6 @@ const CampaignDetails: React.FC = () => {
     );
   }
 
- 
   const approvedPhotos =
     campaign.photos?.filter((p) => p.moderation_status === "approved") || [];
   const progressPercentage =
@@ -54,7 +51,6 @@ const CampaignDetails: React.FC = () => {
     : 0;
   const finalTotal = photoTotal + donationAmount;
 
- 
   const togglePhotoSelection = (photoId: string) => {
     setSelectedPhotos((prev) =>
       prev.includes(photoId)
@@ -90,11 +86,9 @@ const CampaignDetails: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-    
       <div className="bg-gray-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
             <div className="lg:col-span-2">
               <span className="bg-gray-200 text-gray-800 px-3 py-1 rounded-full text-sm font-medium capitalize">
                 {campaign.cause_type || "General"}
@@ -138,7 +132,6 @@ const CampaignDetails: React.FC = () => {
               </button>
             </div>
 
-           
             <div className="bg-white p-6 rounded-xl border border-gray-200 self-start">
               <div className="mb-4 text-center">
                 <span className="text-4xl font-bold text-orange-500">
@@ -165,10 +158,8 @@ const CampaignDetails: React.FC = () => {
         </div>
       </div>
 
-    
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-       
           <div className="lg:col-span-2">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-3xl font-bold text-gray-900">
@@ -206,9 +197,8 @@ const CampaignDetails: React.FC = () => {
                     <img
                       src={photo.thumbnail_url || photo.url}
                       alt="Event"
-                      className={`w-full h-48 object-cover rounded-lg transition-all ${
-                        isSelected ? "ring-4 ring-orange-500" : ""
-                      }`}
+                      className={`w-full h-48 object-cover rounded-lg transition-all ${isSelected ? "ring-4 ring-orange-500" : ""
+                        }`}
                     />
                     <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-white/80 backdrop-blur-sm rounded-md border border-gray-300 flex items-center justify-center">
                       {isSelected && (
@@ -219,11 +209,14 @@ const CampaignDetails: React.FC = () => {
                 );
               })}
             </div>
+
+            <div className="mt-16">
+              <CampaignComments campaign={campaign} />
+            </div>
+
           </div>
 
-       
           <div className="space-y-8 self-start">
-           
             {selectedPhotos.length > 0 && (
               <div className="bg-gray-100 p-6 rounded-xl">
                 <h3 className="text-xl font-bold text-gray-900 mb-4">
@@ -265,7 +258,6 @@ const CampaignDetails: React.FC = () => {
               </div>
             )}
 
-          
             <div className="bg-white p-6 rounded-xl border border-gray-200">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 About This Event
@@ -291,7 +283,6 @@ const CampaignDetails: React.FC = () => {
               </div>
             </div>
 
-        
             <div className="bg-white p-6 rounded-xl border border-gray-200">
               <h3 className="text-xl font-bold text-gray-900 mb-4">
                 Share This Fundraiser
@@ -311,7 +302,6 @@ const CampaignDetails: React.FC = () => {
         </div>
       </div>
 
-      
       <PaymentModal
         isOpen={showPaymentModal}
         onClose={() => setShowPaymentModal(false)}
