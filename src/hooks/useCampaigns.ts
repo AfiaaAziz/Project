@@ -64,12 +64,13 @@ export const useCampaign = (id: string) => {
     queryKey: ['campaign', id],
     queryFn: async () => {
       if (!id) throw new Error('Campaign ID is required');
-      
+
       try {
         const { data, error } = await supabase
           .from('campaigns')
           .select(`
         *,
+        download_count,
         organizer:profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role),
         photographer:profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role),
         photos(id, url, thumbnail_url, watermark_url, filename, tags, bib_number, moderation_status, upload_date),
@@ -107,7 +108,7 @@ export const useCreateCampaign = () => {
   return useMutation({
     mutationFn: async (campaignData: Partial<Campaign>) => {
       console.log('useCampaigns mutationFn called with:', campaignData);
-      
+
       if (!user) throw new Error('User must be authenticated');
 
 
@@ -183,7 +184,7 @@ export const useUpdateCampaign = () => {
   return useMutation({
     mutationFn: async (updates: Partial<Campaign> & { id: string }) => {
       const { id, ...updateData } = updates;
-    
+
       const { data, error } = await supabase
         .from('campaigns')
         .update({
@@ -217,7 +218,7 @@ export const useDeleteCampaign = () => {
         .from('campaigns')
         .delete()
         .eq('id', campaignId);
-    
+
       if (error) throw error;
       return campaignId;
     },
@@ -245,7 +246,9 @@ export const useUserCampaigns = (userId?: string) => {
         const { data, error } = await supabase
           .from('campaigns')
           .select(
-            `*, page_views, organizer: profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role), photographer: profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role), photos(id, moderation_status), donations(id, amount, created_at, donor_name)
+            `*, 
+            download_count,
+            page_views, organizer: profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role), photographer: profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role), photos(id, moderation_status), donations(id, amount, created_at, donor_name)
             `)
           .eq('organizer_id', userId)
           .order('created_at', { ascending: false });
@@ -285,7 +288,7 @@ export const useCreateComment = () => {
     }) => {
       if (!user) throw new Error("You must be logged in to comment.");
       if (!content.trim()) throw new Error("Comment cannot be empty.");
-    
+
       const newComment = {
         campaign_id: campaignId,
         user_id: user.id,

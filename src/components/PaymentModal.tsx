@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, CreditCard, ShoppingCart, Heart } from "lucide-react";
 import { Elements } from "@stripe/react-stripe-js";
@@ -57,7 +56,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       toast.error("You cannot donate to your own campaign");
       return;
     }
-    
+
     if (selectedPhotos.length === 0) {
       toast.error("Please select at least one photo");
       return;
@@ -104,7 +103,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               <X className="w-5 h-5" />
             </button>
           </div>
-          
+
           <div className="text-center py-8">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <X className="w-8 h-8 text-red-600" />
@@ -142,7 +141,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
               <X className="w-5 h-5" />
             </button>
           </div>
-          
+
           <div className="mb-6">
             <h4 className="font-semibold text-gray-900 mb-2">
               {campaign.title}
@@ -196,7 +195,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             <X className="w-5 h-5" />
           </button>
         </div>
-        
+
         <div className="mb-6">
           <h4 className="font-semibold text-gray-900 mb-2">{campaign.title}</h4>
           <p className="text-gray-600 text-sm mb-4">

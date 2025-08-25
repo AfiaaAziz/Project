@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import {
   DollarSign,
@@ -52,7 +51,7 @@ const Dashboard: React.FC = () => {
     0
   );
   const totalPhotoDownloads = campaigns.reduce(
-    (sum, campaign) => sum + (campaign.donations?.length || 0),
+    (sum, campaign) => sum + (campaign.download_count || 0), // Use download_count here
     0
   );
   const totalPageViews = campaigns.reduce(
@@ -86,8 +85,8 @@ const Dashboard: React.FC = () => {
     );
   };
   const handleShareCampaign = async (campaignId: string) => {
-
-const url = `${window.location.origin}/fundraiser/${campaignId}`;    try {
+    const url = `${window.location.origin}/fundraiser/${campaignId}`;
+    try {
       await navigator.clipboard.writeText(url);
       toast.success("Fundraiser link copied to clipboard!");
     } catch (error) {
@@ -117,7 +116,7 @@ const url = `${window.location.origin}/fundraiser/${campaignId}`;    try {
           </div>
         </div>
       </div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between">
@@ -328,7 +327,7 @@ const url = `${window.location.origin}/fundraiser/${campaignId}`;    try {
                         <div className="bg-white rounded-md border border-gray-200 mt-4 grid grid-cols-3 divide-x divide-gray-200">
                           <div className="text-center p-4">
                             <p className="text-xl font-bold text-orange-500">
-                              {campaign.donations?.length || 0}
+          {campaign.download_count || 0} 
                             </p>
                             <p className="text-sm text-gray-500">
                               Photo Downloads
