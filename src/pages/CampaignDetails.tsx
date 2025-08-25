@@ -376,3 +376,5 @@ return (
       />
     </div>
 );
+};
+export default CampaignDetails;
