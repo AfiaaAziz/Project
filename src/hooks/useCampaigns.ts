@@ -17,7 +17,9 @@ export const useCampaigns = (filters?: {
         let query = supabase
           .from('campaigns')
           .select(
-            `*, organizer: profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role), photographer: profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role), photos(id, url, thumbnail_url, moderation_status, tags, bib_number), donations(id, amount, donor_name, created_at)
+            `*, 
+            download_count,
+            organizer: profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role), photographer: profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role), photos(id, url, thumbnail_url, moderation_status, tags, bib_number), donations(id, amount, donor_name, created_at)
             `);
 
         if (filters?.status && filters.status !== 'all') {

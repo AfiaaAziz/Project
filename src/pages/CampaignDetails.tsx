@@ -114,9 +114,9 @@ const CampaignDetails: React.FC = () => {
       console.error("Failed to copy link:", error);
     }
   };
- // In CampaignDetails.tsx, replace the entire return block with this:
+  // In CampaignDetails.tsx, replace the entire return block with this:
 
-return (
+  return (
     <div className="min-h-screen bg-white">
       <div className="bg-gray-100 py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -226,13 +226,15 @@ return (
                   <div
                     key={photo.id}
                     className="relative group"
-                    onClick={() => !isPurchased && togglePhotoSelection(photo.id)}
+                    onClick={() =>
+                      !isPurchased && togglePhotoSelection(photo.id)
+                    }
                   >
                     <img
                       src={photo.thumbnail_url || photo.url}
                       alt="Event"
                       className={`w-full h-48 object-cover rounded-lg transition-all ${
-                        !isPurchased ? 'cursor-pointer' : ''
+                        !isPurchased ? "cursor-pointer" : ""
                       } ${
                         isSelected && !isPurchased
                           ? "ring-4 ring-orange-500"
@@ -375,6 +377,6 @@ return (
         }}
       />
     </div>
-);
+  );
 };
 export default CampaignDetails;

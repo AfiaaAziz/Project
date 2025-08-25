@@ -327,7 +327,7 @@ const Dashboard: React.FC = () => {
                         <div className="bg-white rounded-md border border-gray-200 mt-4 grid grid-cols-3 divide-x divide-gray-200">
                           <div className="text-center p-4">
                             <p className="text-xl font-bold text-orange-500">
-          {campaign.download_count || 0} 
+                              {campaign.download_count || 0}
                             </p>
                             <p className="text-sm text-gray-500">
                               Photo Downloads
