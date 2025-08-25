@@ -64,7 +64,7 @@ export const useCampaign = (id: string) => {
     queryKey: ['campaign', id],
     queryFn: async () => {
       if (!id) throw new Error('Campaign ID is required');
-      codeCode
+      
       try {
         const { data, error } = await supabase
           .from('campaigns')
@@ -107,7 +107,7 @@ export const useCreateCampaign = () => {
   return useMutation({
     mutationFn: async (campaignData: Partial<Campaign>) => {
       console.log('useCampaigns mutationFn called with:', campaignData);
-      codeCode
+      
       if (!user) throw new Error('User must be authenticated');
 
 
@@ -183,7 +183,7 @@ export const useUpdateCampaign = () => {
   return useMutation({
     mutationFn: async (updates: Partial<Campaign> & { id: string }) => {
       const { id, ...updateData } = updates;
-      codeCode
+    
       const { data, error } = await supabase
         .from('campaigns')
         .update({
@@ -217,7 +217,7 @@ export const useDeleteCampaign = () => {
         .from('campaigns')
         .delete()
         .eq('id', campaignId);
-      codeCode
+    
       if (error) throw error;
       return campaignId;
     },
@@ -249,7 +249,6 @@ export const useUserCampaigns = (userId?: string) => {
             `)
           .eq('organizer_id', userId)
           .order('created_at', { ascending: false });
-        codeCode
         console.log('Supabase se data wapis aaya:', data);
         console.log('Supabase se error wapis aaya:', error);
 
@@ -286,7 +285,7 @@ export const useCreateComment = () => {
     }) => {
       if (!user) throw new Error("You must be logged in to comment.");
       if (!content.trim()) throw new Error("Comment cannot be empty.");
-      codeCode
+    
       const newComment = {
         campaign_id: campaignId,
         user_id: user.id,

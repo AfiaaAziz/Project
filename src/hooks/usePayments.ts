@@ -14,7 +14,7 @@ queryClient.invalidateQueries({ queryKey: ['campaign-donations'] });
 };
 const processPayment = async (paymentData: DonationData) => {
 try {
-codeCode
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -41,7 +41,7 @@ invalidateQueries,
 export const useCreatePaymentIntent = () => {
 return useMutation({
 mutationFn: async (paymentData: DonationData) => {
-codeCode
+
 if (!paymentData.campaignId || !paymentData.amount || !paymentData.donorEmail) {
     throw new Error('Missing required payment information');
   }

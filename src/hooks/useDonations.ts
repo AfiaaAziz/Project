@@ -11,7 +11,6 @@ const { data, error } = await supabase
 .insert([donationData])
 .select()
 .single();
-codeCode
 if (error) throw error;
   return data;
 },
@@ -36,7 +35,7 @@ const { data, error } = await supabase
 .select('*')
 .eq('campaign_id', campaignId)
 .order('created_at', { ascending: false });
-codeCode
+
 if (error) throw error;
     return data as Donation[];
 
@@ -60,7 +59,7 @@ const { data, error } = await supabase
 .select(*, campaigns(title, id))
 .order('created_at', { ascending: false })
 .limit(limit);
-codeCode
+
 if (error) throw error;
     return data;
 

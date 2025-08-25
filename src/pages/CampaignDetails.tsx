@@ -88,7 +88,7 @@ return (
 <p className="text-gray-600 leading-relaxed max-w-2xl mb-8">
 {campaign.description}
 </p>
-codeCode
+
 <div className="flex flex-wrap items-center gap-x-6 gap-y-4 text-gray-700 mb-8">
             <div className="flex items-center space-x-2">
               <MapPin className="w-5 h-5 text-gray-400" />

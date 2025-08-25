@@ -75,7 +75,7 @@ const Dashboard: React.FC = () => {
       toast.error("Campaign title cannot be empty.");
       return;
     }
-    codeCode
+
     await updateCampaignMutation.mutateAsync(
       { id: campaignId, ...editFormData },
       {
@@ -117,7 +117,7 @@ const url = `${window.location.origin}/fundraiser/${campaignId}`;    try {
           </div>
         </div>
       </div>
-      codeCode
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between">
