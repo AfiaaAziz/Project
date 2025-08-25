@@ -1,6 +1,4 @@
 
-
-
 import React, { useState } from "react";
 import {
   DollarSign,
@@ -88,8 +86,8 @@ const Dashboard: React.FC = () => {
     );
   };
   const handleShareCampaign = async (campaignId: string) => {
-    const url = ${ window.location.origin }/fundraiser/${ campaignId };
-    try {
+
+const url = `${window.location.origin}/fundraiser/${campaignId}`;    try {
       await navigator.clipboard.writeText(url);
       toast.success("Fundraiser link copied to clipboard!");
     } catch (error) {
