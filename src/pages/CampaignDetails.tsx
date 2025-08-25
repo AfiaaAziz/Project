@@ -119,7 +119,7 @@ const CampaignDetails: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Download className="w-5 h-5 text-gray-400" />
-                  {campaign.download_count || 0} 
+                  {campaign.download_count || 0}
                 </div>
               </div>
 
@@ -197,8 +197,9 @@ const CampaignDetails: React.FC = () => {
                     <img
                       src={photo.thumbnail_url || photo.url}
                       alt="Event"
-                      className={`w-full h-48 object-cover rounded-lg transition-all ${isSelected ? "ring-4 ring-orange-500" : ""
-                        }`}
+                      className={`w-full h-48 object-cover rounded-lg transition-all ${
+                        isSelected ? "ring-4 ring-orange-500" : ""
+                      }`}
                     />
                     <div className="absolute top-2.5 right-2.5 w-6 h-6 bg-white/80 backdrop-blur-sm rounded-md border border-gray-300 flex items-center justify-center">
                       {isSelected && (
