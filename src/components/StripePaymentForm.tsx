@@ -107,14 +107,14 @@ const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
       if (error) {
         throw new Error(error.message || "Payment failed");
-      }
-      else if (paymentIntent.status === "succeeded") {
-        queryClient.invalidateQueries({ queryKey: ['campaigns'] });
-        queryClient.invalidateQueries({ queryKey: ['campaign', paymentData.campaignId] });
+      } else if (paymentIntent.status === "succeeded") {
+        queryClient.invalidateQueries({ queryKey: ["campaigns"] });
+        queryClient.invalidateQueries({
+          queryKey: ["campaign", paymentData.campaignId],
+        });
         toast.success("Payment successful! Thank you for your donation.");
         onSuccess();
-      }
-      else {
+      } else {
         throw new Error("Payment was not completed successfully");
       }
     } catch (error: any) {
