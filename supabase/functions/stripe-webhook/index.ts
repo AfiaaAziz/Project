@@ -1,4 +1,3 @@
-// --- YEH SAHI CODE HAI functions/stripe-webhook/index.ts KE LIYE ---
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@14.21.0';
@@ -9,73 +8,70 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
+const STRIPE_SECRET_KEY = Deno.env.get('STRIPE_SECRET_KEY');
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'); 
+const STRIPE_WEBHOOK_SECRET = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+
+if (!STRIPE_SECRET_KEY || !SUPABASE_URL || !SERVICE_ROLE_KEY || !STRIPE_WEBHOOK_SECRET) {
+  console.error("CRITICAL ERROR: Missing one or more required environment variables in Supabase Edge Function Secrets.");
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY') || '', {
-      apiVersion: '2024-06-20',
-    });
-
-    const supabaseClient = createClient(
-      Deno.env.get('PROJECT_URL') ?? '',
-      Deno.env.get('SERVICE_ROLE_KEY') ?? '',
-      { auth: { persistSession: false } }
-    );
+    const stripe = new Stripe(STRIPE_SECRET_KEY || '', { apiVersion: '2024-06-20' });
+    const supabaseClient = createClient(SUPABASE_URL || '', SERVICE_ROLE_KEY || '', { auth: { persistSession: false } });
 
     const signature = req.headers.get('stripe-signature');
     const body = await req.text();
 
     let event;
     try {
-      event = await stripe.webhooks.constructEventAsync(
-        body,
-        signature!,
-        Deno.env.get('STRIPE_WEBHOOK_SECRET') || ''
-      );
+      event = await stripe.webhooks.constructEventAsync(body, signature!, STRIPE_WEBHOOK_SECRET || '');
+      console.log("Webhook event constructed successfully:", event.type);
     } catch (err) {
-      console.log(`Webhook signature verification failed.`, err.message);
+      console.error(`Webhook signature verification failed.`, err.message);
       return new Response('Webhook signature verification failed', { status: 400 });
     }
 
-    // Handle the event
-    switch (event.type) {
-      case 'payment_intent.succeeded':
-        const paymentIntent = event.data.object;
-        const { campaignId, donorEmail, donorName, photoIds } = paymentIntent.metadata;
+    if (event.type === 'payment_intent.succeeded') {
+      const paymentIntent = event.data.object;
+      const { campaignId, donorEmail, donorName, photoIds } = paymentIntent.metadata;
 
-        console.log('Processing successful payment:', paymentIntent.id);
+      console.log(`Processing successful payment: ${paymentIntent.id} for campaign: ${campaignId}`);
 
-        // Create donation record
-        const { error: donationError } = await supabaseClient
-          .from('donations')
-          .insert([
-            {
-              campaign_id: campaignId,
-              donor_email: donorEmail,
-              donor_name: donorName || null,
-              amount: paymentIntent.amount / 100, // Convert from cents
-              stripe_payment_id: paymentIntent.id,
-              photo_ids: photoIds ? JSON.parse(photoIds) : [],
-            },
-          ]);
+      if (!campaignId) {
+        throw new Error("Missing campaignId in payment intent metadata.");
+      }
 
-        if (donationError) {
-          console.error('Error creating donation:', donationError);
-          throw donationError;
-        }
+      const donationData = {
+        campaign_id: campaignId,
+        donor_email: donorEmail,
+        donor_name: donorName || null,
+        amount: paymentIntent.amount / 100,
+        stripe_payment_id: paymentIntent.id,
+        photo_ids: photoIds ? JSON.parse(photoIds) : [],
+      };
 
-        console.log('Payment succeeded and donation recorded:', paymentIntent.id);
-        break;
+      console.log("Attempting to insert donation:", donationData);
 
-      case 'payment_intent.payment_failed':
-        console.log('Payment failed:', event.data.object.id);
-        break;
+      const { data, error: donationError } = await supabaseClient
+        .from('donations')
+        .insert([donationData])
+        .select();
 
-      default:
-        console.log(`Unhandled event type ${event.type}`);
+      if (donationError) {
+        console.error('DATABASE ERROR creating donation:', donationError);
+        throw donationError;
+      }
+
+      console.log('SUCCESS: Payment succeeded and donation recorded:', data);
+    } else {
+      console.log(`Unhandled event type: ${event.type}`);
     }
 
     return new Response(JSON.stringify({ received: true }), {
@@ -83,7 +79,7 @@ Deno.serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error('Webhook error:', error);
+    console.error('FATAL WEBHOOK ERROR:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       {

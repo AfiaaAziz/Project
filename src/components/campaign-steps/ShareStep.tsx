@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { Campaign } from "../../types";
 import { Copy, Share2, QrCode, ExternalLink } from "lucide-react";
-import { QRCodeCanvas } from 'qrcode.react'; 
+import { QRCodeCanvas } from "qrcode.react";
 
 type ShareStepProps = {
   data: Partial<Campaign>;
@@ -13,7 +13,7 @@ type ShareStepProps = {
 
 const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
   const navigate = useNavigate();
-  const fundraiserUrl = `${window.location.origin}/fundraiser/${data.id || ''}`;
+  const fundraiserUrl = `${window.location.origin}/fundraiser/${data.id || ""}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(fundraiserUrl);
@@ -21,14 +21,16 @@ const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
   };
 
   const handleDownloadQR = () => {
-    const canvas = document.getElementById('qr-code-canvas') as HTMLCanvasElement;
+    const canvas = document.getElementById(
+      "qr-code-canvas"
+    ) as HTMLCanvasElement;
     if (canvas) {
       const pngUrl = canvas
         .toDataURL("image/png")
         .replace("image/png", "image/octet-stream");
       let downloadLink = document.createElement("a");
       downloadLink.href = pngUrl;
-      downloadLink.download = `${data.title || 'fundraiser'}-qr-code.png`;
+      downloadLink.download = `${data.title || "fundraiser"}-qr-code.png`;
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -38,39 +40,43 @@ const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
 
   const handleShare = () => {
     if (navigator.share) {
-      navigator.share({
-        title: data.title || 'Check out this fundraiser!',
-        text: data.description || 'Support this great cause by downloading photos.',
-        url: fundraiserUrl,
-      })
-        .then(() => console.log('Successful share'))
-        .catch((error) => console.log('Error sharing', error));
+      navigator
+        .share({
+          title: data.title || "Check out this fundraiser!",
+          text:
+            data.description ||
+            "Support this great cause by downloading photos.",
+          url: fundraiserUrl,
+        })
+        .then(() => console.log("Successful share"))
+        .catch((error) => console.log("Error sharing", error));
     } else {
-    
-      handleCopy(); 
+      handleCopy();
       toast.success("Link copied! You can now paste it on social media.");
     }
   };
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
-      
-      <div style={{ display: 'none' }}>
-        <QRCodeCanvas 
-            id="qr-code-canvas" 
-            value={fundraiserUrl} 
-            size={256} 
-            level={"H"}
-            imageSettings={{
-                src: "/images/logo-icon.png", 
-                excavate: true,
-                height: 40,
-                width: 40
-            }}
+      <div style={{ display: "none" }}>
+        <QRCodeCanvas
+          id="qr-code-canvas"
+          value={fundraiserUrl}
+          size={256}
+          level={"H"}
+          imageSettings={{
+            src: "/images/logo-icon.png",
+            excavate: true,
+            height: 40,
+            width: 40,
+          }}
         />
       </div>
 
       <div>
-        <label htmlFor="fundraiserUrl" className="block text-sm font-semibold text-gray-700 mb-1">
+        <label
+          htmlFor="fundraiserUrl"
+          className="block text-sm font-semibold text-gray-700 mb-1"
+        >
           Your Fundraiser URL
         </label>
         <div className="flex items-center space-x-2">
@@ -95,8 +101,7 @@ const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <button
           type="button"
-          onClick={handleShare} 
-        
+          onClick={handleShare}
           className="flex items-center justify-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold transition-colors text-sm"
         >
           <Share2 className="w-4 h-4" />
@@ -104,16 +109,15 @@ const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
         </button>
         <button
           type="button"
-          onClick={handleDownloadQR} 
+          onClick={handleDownloadQR}
           className="flex items-center justify-center space-x-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold transition-colors text-sm"
         >
           <QrCode className="w-4 h-4" />
           <span>Download QR Code</span>
         </button>
       </div>
-      
-      
-       <div className="text-center">
+
+      <div className="text-center">
         <Link
           to={fundraiserUrl}
           target="_blank"
@@ -145,7 +149,7 @@ const ShareStep: React.FC<ShareStepProps> = ({ data, onComplete, onBack }) => {
         </button>
         <button
           type="button"
-          onClick={onComplete} 
+          onClick={onComplete}
           className="px-8 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 font-semibold transition-colors text-sm"
         >
           Return Home »

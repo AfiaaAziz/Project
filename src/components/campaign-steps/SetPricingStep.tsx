@@ -16,12 +16,11 @@ const SetPricingStep: React.FC<SetPricingStepProps> = ({
 }) => {
   const [photoPrice, setPhotoPrice] = useState<number>(data.photo_price || 10);
 
-
   const { platformFeeAmount, processingFeeAmount, totalAmount } =
     useMemo(() => {
       const price = isNaN(photoPrice) ? 0 : photoPrice;
-      const platformFee = 0.1; 
-      const processingFee = 0.03; 
+      const platformFee = 0.1;
+      const processingFee = 0.03;
 
       const platformFeeAmount = price * platformFee;
       const processingFeeAmount = price * processingFee;
@@ -48,7 +47,7 @@ const SetPricingStep: React.FC<SetPricingStepProps> = ({
   };
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/[^0-9.]/g, ""); 
+    const value = e.target.value.replace(/[^0-9.]/g, "");
     setPhotoPrice(parseFloat(value) || 0);
   };
 
@@ -67,7 +66,7 @@ const SetPricingStep: React.FC<SetPricingStepProps> = ({
           </span>
           <input
             id="photoPrice"
-            type="text" 
+            type="text"
             value={photoPrice === 0 ? "" : photoPrice}
             onChange={handlePriceChange}
             className="w-full pl-7 pr-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:border-orange-500"

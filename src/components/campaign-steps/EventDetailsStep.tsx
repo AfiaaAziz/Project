@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -21,9 +20,9 @@ const EventDetailsStep: React.FC<EventDetailsStepProps> = ({
   const [formData, setFormData] = useState({
     title: data.title || "",
     description: data.description || "",
-    photographer_name: data.photographer_name || "", 
+    photographer_name: data.photographer_name || "",
     photographer_website: "",
-    location: data.location || "", 
+    location: data.location || "",
     event_date: data.event_date ? new Date(data.event_date) : null,
     fundraising_goal: data.goal_amount?.toString() || "",
     visibility: data.visibility || "public",
@@ -37,7 +36,7 @@ const EventDetailsStep: React.FC<EventDetailsStepProps> = ({
     if (!formData.description.trim())
       newErrors.description = "Description is required";
     if (!formData.photographer_name.trim())
-      newErrors.photographer_name = "Photographer name is required"; 
+      newErrors.photographer_name = "Photographer name is required";
     if (!formData.location.trim()) newErrors.location = "Location is required";
     if (!formData.event_date) newErrors.event_date = "Event date is required";
     setErrors(newErrors);
@@ -50,14 +49,14 @@ const EventDetailsStep: React.FC<EventDetailsStepProps> = ({
     onUpdate({
       title: formData.title,
       description: formData.description,
-      photographer_name: formData.photographer_name, 
+      photographer_name: formData.photographer_name,
 
       event_date: formData.event_date?.toISOString(),
       goal_amount: formData.fundraising_goal
         ? Number(formData.fundraising_goal)
         : undefined,
       visibility: formData.visibility as "public" | "private",
-      location: formData.location, 
+      location: formData.location,
     });
     onNext();
   };
@@ -127,9 +126,9 @@ const EventDetailsStep: React.FC<EventDetailsStepProps> = ({
           </label>
           <input
             id="photographer_name"
-            name="photographer_name" 
+            name="photographer_name"
             type="text"
-            value={formData.photographer_name} 
+            value={formData.photographer_name}
             onChange={handleInputChange}
             className="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-500 focus:border-orange-500"
             placeholder="Photographer name"

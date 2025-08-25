@@ -5,6 +5,7 @@ import { DonationData } from "../lib/stripe";
 import { usePayment } from "../hooks/usePayments";
 import { formatCurrency } from "../utils/formatters";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface StripePaymentFormProps {
   paymentData: DonationData & {
@@ -20,6 +21,8 @@ const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   onSuccess,
   onError,
 }) => {
+  const queryClient = useQueryClient();
+
   const stripe = useStripe();
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
@@ -104,11 +107,14 @@ const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
       if (error) {
         throw new Error(error.message || "Payment failed");
-      } else if (paymentIntent.status === "succeeded") {
-        invalidateQueries();
+      }
+      else if (paymentIntent.status === "succeeded") {
+        queryClient.invalidateQueries({ queryKey: ['campaigns'] });
+        queryClient.invalidateQueries({ queryKey: ['campaign', paymentData.campaignId] });
         toast.success("Payment successful! Thank you for your donation.");
         onSuccess();
-      } else {
+      }
+      else {
         throw new Error("Payment was not completed successfully");
       }
     } catch (error: any) {

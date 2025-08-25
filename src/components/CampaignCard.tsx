@@ -23,7 +23,7 @@ const CampaignCard: React.FC<CampaignCardProps> = ({ campaign }) => {
 
   const approvedPhotos =
     photos?.filter((p) => p.moderation_status === "approved") || [];
-  const heroImage = approvedPhotos[0]?.url || "/images/placeholder-1.jpg"; 
+  const heroImage = approvedPhotos[0]?.url || "/images/placeholder-1.jpg";
 
   return (
     <Link

@@ -12,7 +12,7 @@ interface TermsConditionsStepProps {
 const TermsConditionsStep: React.FC<TermsConditionsStepProps> = ({
   data,
   onUpdate,
-  onComplete, 
+  onComplete,
   onBack,
 }) => {
   const [agreed, setAgreed] = useState(false);
@@ -23,7 +23,7 @@ const TermsConditionsStep: React.FC<TermsConditionsStepProps> = ({
       toast.error("You must agree to the terms to continue.");
       return;
     }
-    onComplete(); 
+    onComplete();
   };
 
   return (

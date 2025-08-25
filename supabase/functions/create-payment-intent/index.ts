@@ -1,3 +1,4 @@
+
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@14.21.0';
 
@@ -18,31 +19,18 @@ Deno.serve(async (req) => {
     if (!campaignId || !amount || !donorEmail) {
       throw new Error('Missing required payment data');
     }
-
-    // Validate UUID format
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(campaignId)) {
-      throw new Error('Invalid campaign ID format');
-    }
-
+    
     const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL'); 
+    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'); 
 
-    if (!stripeSecretKey) {
-      throw new Error('Stripe is not configured. Please set up your Stripe keys.');
+    if (!stripeSecretKey || !supabaseUrl || !serviceRoleKey) {
+      throw new Error('One or more environment variables are not set in Supabase secrets.');
     }
 
-    // Initialize Stripe with live account
-    const stripe = new Stripe(stripeSecretKey, {
-      apiVersion: '2024-06-20',
-    });
+    const stripe = new Stripe(stripeSecretKey, { apiVersion: '2024-06-20' });
+    const supabaseClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
-    const supabaseClient = createClient(
-  Deno.env.get('PROJECT_URL') ?? '',
-  Deno.env.get('SERVICE_ROLE_KEY') ?? '',
-  { auth: { persistSession: false } } // <-- YEH OPTION ADD KAREIN
-);
-
-    // Verify campaign exists
     const { data: campaign, error: campaignError } = await supabaseClient
       .from('campaigns')
       .select('id, title, status')
@@ -50,20 +38,17 @@ Deno.serve(async (req) => {
       .single();
 
     if (campaignError || !campaign) {
-      throw new Error('Campaign not found');
+      throw new Error('Campaign not found or Supabase connection failed.');
     }
 
     if (campaign.status !== 'active') {
       throw new Error('Campaign is not active');
     }
 
-    // Create Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert to cents
+      amount: Math.round(amount * 100),
       currency: 'usd',
-      automatic_payment_methods: {
-        enabled: true,
-      },
+      automatic_payment_methods: { enabled: true },
       metadata: {
         campaignId,
         donorEmail,
@@ -74,8 +59,7 @@ Deno.serve(async (req) => {
       receipt_email: donorEmail,
     });
 
-    // Store payment intent in database
-    const { error: paymentError } = await supabaseClient
+    await supabaseClient
       .from('payment_intents')
       .insert({
         stripe_payment_intent_id: paymentIntent.id,
@@ -88,19 +72,8 @@ Deno.serve(async (req) => {
         photo_ids: photoIds || [],
       });
 
-    if (paymentError) {
-      console.error('Error storing payment intent:', paymentError);
-      throw paymentError;
-    }
-
     return new Response(
-      JSON.stringify({
-        id: paymentIntent.id,
-        client_secret: paymentIntent.client_secret,
-        amount: paymentIntent.amount,
-        currency: paymentIntent.currency,
-        status: paymentIntent.status,
-      }),
+      JSON.stringify({ client_secret: paymentIntent.client_secret }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

@@ -19,7 +19,7 @@ const YourCauseStep: React.FC<YourCauseStepProps> = ({
     cause_type: data.cause_type || "",
     charity_name: data.charity_name || "",
     charity_percentage: data.charity_fee || 70,
-    personal_percentage: 0, 
+    personal_percentage: 0,
     photographer_percentage: data.photographer_fee || 30,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -86,7 +86,7 @@ const YourCauseStep: React.FC<YourCauseStepProps> = ({
       ...prev,
       charity_percentage: charity,
       photographer_percentage: photographer,
-      personal_percentage: 0, 
+      personal_percentage: 0,
     }));
   };
 
