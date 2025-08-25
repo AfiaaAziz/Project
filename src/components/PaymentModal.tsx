@@ -1,15 +1,21 @@
 import React, { useState } from "react";
-import { X, CreditCard, ShoppingCart, Heart } from "lucide-react";
-import { Elements } from "@stripe/react-stripe-js";
+import {
+  X,
+  CreditCard,
+  ShoppingCart,
+  CheckCircle,
+  Download,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import StripePaymentForm from "./StripePaymentForm";
 import { stripePromise } from "../lib/stripe";
-import { Campaign } from "../types";
+import { Campaign, Photo } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { formatCurrency } from "../utils/formatters";
 import toast from "react-hot-toast";
+import { supabase } from "../lib/supabase";
 
 const donationSchema = z.object({
   donorEmail: z.string().email("Please enter a valid email"),
@@ -36,7 +42,10 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onSuccess,
 }) => {
   const { user } = useAuth();
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
+
+  const [paymentStatus, setPaymentStatus] = useState<
+    "form" | "processing" | "success"
+  >("form");
   const [paymentData, setPaymentData] = useState<any>(null);
 
   const {
@@ -79,29 +88,116 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       donationAmount: additionalDonation,
       photoAmount: photoTotal,
     });
-    setShowPaymentForm(true);
+    // setShowPaymentForm(true);
+    setPaymentStatus("processing");
   };
 
   const handlePaymentSuccess = () => {
-    setShowPaymentForm(false);
-    reset();
+    //setShowPaymentForm(false);
+    //reset();
+    setPaymentStatus("success");
+
     onSuccess();
     toast.success("Thank you for your donation!");
   };
 
   const handlePaymentError = (error: string) => {
-    setShowPaymentForm(false);
+    //setShowPaymentForm(false);
+    setPaymentStatus("form");
+
     toast.error(error);
   };
 
   const handleClose = () => {
-    setShowPaymentForm(false);
+    //setShowPaymentForm(false);
+    setPaymentStatus("form"); // <-- ADD THIS LINE
+
     setPaymentData(null);
     reset();
     onClose();
   };
 
+  // ...after useState declarations
+  const purchasedPhotos =
+    campaign.photos?.filter((p) => selectedPhotos.includes(p.id)) || [];
+
+  const handleDownload = async (photo: Photo) => {
+    // 1. Trigger the download in the browser
+    const response = await fetch(photo.url);
+    const blob = await response.blob();
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = photo.filename || `goodpix-photo-${photo.id}.jpg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Downloading photo!");
+
+    // 2. Call the Supabase function to increment the download count
+    const { error } = await supabase.rpc("increment_download_count", {
+      campaign_id_to_update: campaign.id,
+    });
+
+    if (error) {
+      console.error("Failed to increment download count:", error);
+    }
+  };
+  // ...
   if (!isOpen) return null;
+
+  // --- ADD THIS ENTIRE NEW BLOCK ---
+  if (paymentStatus === "success") {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+          <div className="text-center mb-6">
+            <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-gray-900">
+              Payment Successful!
+            </h3>
+            <p className="text-gray-600 mt-2">
+              Thank you for your support. You can now download your photos.
+            </p>
+          </div>
+
+          <div className="space-y-4 mb-6">
+            {purchasedPhotos.map((photo) => (
+              <div
+                key={photo.id}
+                className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+              >
+                <div className="flex items-center space-x-3">
+                  <img
+                    src={photo.thumbnail_url || photo.url}
+                    alt="Purchased"
+                    className="w-12 h-12 rounded-md object-cover"
+                  />
+                  <span className="text-sm font-medium text-gray-800">
+                    {photo.filename || `Photo ${photo.id}`}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleDownload(photo)}
+                  className="flex items-center space-x-2 bg-orange-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-orange-600"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download</span>
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            onClick={handleClose}
+            className="w-full py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    );
+  }
+  // --- END OF NEW BLOCK ---
 
   if (isOwnCampaign) {
     return (
@@ -140,7 +236,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     );
   }
 
-  if (showPaymentForm && paymentData) {
+if (paymentStatus === "processing" && paymentData) {    
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
         <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">

@@ -38,10 +38,10 @@ const FundraiserCardPlaceholder: React.FC = () => (
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  console.log("Dashboard User:", user); 
+  console.log("Dashboard User:", user);
   const { data: campaigns = [], isLoading } = useUserCampaigns(user?.id);
 
-  const updateCampaignMutation = useUpdateCampaign(); 
+  const updateCampaignMutation = useUpdateCampaign();
 
   const [editingCampaignId, setEditingCampaignId] = useState<string | null>(
     null
@@ -56,16 +56,15 @@ const Dashboard: React.FC = () => {
     0
   );
   const totalPhotoDownloads = campaigns.reduce(
-    (sum, campaign) => sum + (campaign.donations?.length || 0),
+    (sum, campaign) => sum + (campaign.download_count || 0),
     0
   );
-  
+
   const totalPageViews = campaigns.reduce(
     (sum, campaign) => sum + (campaign.page_views || 0),
     0
   );
 
- 
   const handleEditClick = (campaign: Campaign) => {
     setEditingCampaignId(campaign.id);
     setEditFormData({
@@ -89,7 +88,7 @@ const Dashboard: React.FC = () => {
       { id: campaignId, ...editFormData },
       {
         onSuccess: () => {
-          setEditingCampaignId(null); 
+          setEditingCampaignId(null);
         },
       }
     );
@@ -107,7 +106,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      
       <div className="bg-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
@@ -130,11 +128,8 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-    
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          
           <div className="bg-white p-5 rounded-lg border border-gray-200 flex items-center justify-between">
             <div>
               <p className="text-3xl font-bold text-gray-800">
@@ -181,7 +176,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-      
         <div>
           <h2 className="text-2xl font-bold text-gray-800 mb-6">
             Fundraisers ({String(campaigns.length).padStart(2, "0")})
@@ -223,7 +217,6 @@ const Dashboard: React.FC = () => {
                     className="bg-gray-50 border border-gray-200 p-6 rounded-lg"
                   >
                     {isEditing ? (
-                      
                       <div className="space-y-4">
                         <div>
                           <label className="text-sm font-medium text-gray-700">
@@ -276,7 +269,6 @@ const Dashboard: React.FC = () => {
                         </div>
                       </div>
                     ) : (
-                      
                       <>
                         <div className="flex flex-col md:flex-row justify-between md:items-start mb-4">
                           <div className="flex-1">
@@ -346,7 +338,7 @@ const Dashboard: React.FC = () => {
                         <div className="bg-white rounded-md border border-gray-200 mt-4 grid grid-cols-3 divide-x divide-gray-200">
                           <div className="text-center p-4">
                             <p className="text-xl font-bold text-orange-500">
-                              {campaign.donations?.length || 0}
+                              {campaign.download_count || 0} 
                             </p>
                             <p className="text-sm text-gray-500">
                               Photo Downloads

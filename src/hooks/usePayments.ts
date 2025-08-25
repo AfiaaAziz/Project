@@ -16,7 +16,7 @@ export const usePayment = () => {
 
   const processPayment = async (paymentData: DonationData) => {
     try {
-      
+
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
@@ -24,7 +24,7 @@ export const usePayment = () => {
         throw new Error('Please connect to Supabase first to enable payments');
       }
 
-      
+
       const paymentIntent = await createPaymentIntent(paymentData);
 
       invalidateQueries();
@@ -45,12 +45,12 @@ export const usePayment = () => {
 export const useCreatePaymentIntent = () => {
   return useMutation({
     mutationFn: async (paymentData: DonationData) => {
-      
+
       if (!paymentData.campaignId || !paymentData.amount || !paymentData.donorEmail) {
         throw new Error('Missing required payment information');
       }
 
-      
+
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(paymentData.campaignId)) {
         throw new Error('Invalid campaign ID format');

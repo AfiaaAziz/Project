@@ -119,7 +119,7 @@ const CampaignDetails: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Download className="w-5 h-5 text-gray-400" />
-                  <span>{campaign.donations?.length || 0} Downloads</span>
+                  {campaign.download_count || 0} 
                 </div>
               </div>
 
@@ -213,7 +213,6 @@ const CampaignDetails: React.FC = () => {
             <div className="mt-16">
               <CampaignComments campaign={campaign} />
             </div>
-
           </div>
 
           <div className="space-y-8 self-start">

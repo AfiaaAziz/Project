@@ -75,6 +75,7 @@ export const useCampaign = (id: string) => {
           .from('campaigns')
           .select(`
             *,
+            download_count, // <-- ADD THIS LINE
             organizer:profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role),
             photographer:profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role),
             photos(id, url, thumbnail_url, watermark_url, filename, tags, bib_number, moderation_status, upload_date),
@@ -258,7 +259,8 @@ export const useUserCampaigns = (userId?: string) => {
           .from('campaigns')
           .select(`
             *,
-            page_views, 
+            page_views,
+            download_count, 
             organizer:profiles!campaigns_organizer_id_fkey(id, full_name, avatar_url, role),
             photographer:profiles!campaigns_photographer_id_fkey(id, full_name, avatar_url, role),
             photos(id, moderation_status),
@@ -326,7 +328,7 @@ export const useCreateComment = () => {
       return data;
     },
     onSuccess: (data) => {
-      
+
       queryClient.invalidateQueries({ queryKey: ["campaign", data.campaign_id] });
       toast.success("Comment posted!");
     },
