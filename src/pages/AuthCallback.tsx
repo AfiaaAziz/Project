@@ -26,25 +26,11 @@ const AuthCallback: React.FC = () => {
             .single();
 
           if (profileError && profileError.code === "PGRST116") {
+          
+
+            const role = localStorage.getItem("signup_role") || "organizer";
+            localStorage.removeItem("signup_role");
             const { error: createError } = await supabase
-              .from("profiles")
-              .insert({
-                id: data.session.user.id,
-                full_name:
-                  data.session.user.user_metadata?.full_name ||
-                  data.session.user.user_metadata?.name ||
-                  data.session.user.email?.split("@")[0] ||
-                  "User",
-                avatar_url:
-                  data.session.user.user_metadata?.avatar_url ||
-                  data.session.user.user_metadata?.picture ||
-                  null,
-                role: "organizer",
-              });
-              
-              const role = localStorage.getItem("signup_role") || "organizer";
-              localStorage.removeItem("signup_role");
-              const { error: createError } = await supabase
               .from("profiles")
               .insert({
                 id: data.session.user.id,
