@@ -23,7 +23,7 @@ interface AuthContextType {
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
-  signOut: () => Promise<void>; 
+  signOut: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<any>;
   signUp: (
     email: string,
@@ -87,14 +87,27 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchProfile(user.id).then((profileData) => {
-        setProfile(profileData);
-      });
-    } else {
-      setProfile(null);
-    }
-  }, [user]);
+    const handleUserProfile = async () => {
+      if (user) {
+        const existingProfile = await fetchProfile(user.id);
+        
+        if (existingProfile) {
+          setProfile(existingProfile);
+        } else {
+     
+          const newProfile = await createProfile(user);
+          if (newProfile) {
+            setProfile(newProfile);
+          }
+        }
+      } else {
+        setProfile(null);
+      }
+    };
+
+    handleUserProfile();
+  }, [user]); 
+
 
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
     try {
