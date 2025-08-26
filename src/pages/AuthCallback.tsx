@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // Add useLocation
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Camera } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
@@ -7,12 +7,28 @@ import { useAuth } from "../contexts/AuthContext";
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
+  const location = useLocation(); // Get URL params
 
   useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get("error");
+    const errorDescription = params.get("error_description");
+
+    if (error) {
+      console.error("Auth error:", errorDescription);
+      // Redirect back to auth page with error message
+      navigate(
+        `/auth?error=${encodeURIComponent(
+          errorDescription || "Authentication failed"
+        )}`
+      );
+      return;
+    }
+
     if (!loading && user) {
       navigate("/dashboard", { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, navigate, location.search]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
