@@ -90,6 +90,8 @@ const AuthPage: React.FC = () => {
           <GoogleSignInButton
             mode={isLogin ? "signin" : "signup"}
             disabled={loading}
+            role={formData.role} 
+
           />
         </div>
 
