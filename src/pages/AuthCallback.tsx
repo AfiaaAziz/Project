@@ -1,28 +1,22 @@
-// AuthCallback.tsx
-
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext"; // Import useAuth
+import { useAuth } from "../contexts/AuthContext"; 
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Camera } from "lucide-react";
 
 const AuthCallback: React.FC = () => {
-  const { user, loading } = useAuth(); // Get user and loading state from context
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Wait for the authentication process to complete.
-    // The onAuthStateChange listener in AuthContext will handle everything.
     if (!loading) {
       if (user) {
-        // Once the user is loaded, redirect to the dashboard.
         navigate("/dashboard", { replace: true });
       } else {
-        // If for some reason authentication fails, go back to the auth page.
         navigate("/auth", { replace: true });
       }
     }
-  }, [user, loading, navigate]); // Rerun effect when user or loading state changes
+  }, [user, loading, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
