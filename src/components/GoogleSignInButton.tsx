@@ -46,7 +46,7 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
         ></path>
         <path fill="none" d="M0 0h48v48H0z"></path>
       </svg>
-      {mode === 'signup' ? 'Sign up with Google' : 'Sign in with Google'}
+      {mode === "signup" ? "Sign up with Google" : "Sign in with Google"}
     </button>
   );
 };

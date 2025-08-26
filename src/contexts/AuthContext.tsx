@@ -54,31 +54,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true); // Start true to show loading initially
 
-  // Fetch initial session explicitly
-  useEffect(() => {
-    const getInitialSession = async () => {
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-        setSession(session);
-        setUser(session?.user ?? null);
-      } catch (error) {
-        console.error("Error fetching initial session:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getInitialSession();
-  }, []);
-
   useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
       setUser(newSession?.user ?? null);
+      setLoading(false);
     });
 
     return () => {
@@ -90,24 +72,23 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const handleUserProfile = async () => {
       if (user) {
         const existingProfile = await fetchProfile(user.id);
-        
+
         if (existingProfile) {
           setProfile(existingProfile);
         } else {
-     
           const newProfile = await createProfile(user);
           if (newProfile) {
             setProfile(newProfile);
           }
         }
-      } else {
-        setProfile(null);
       }
     };
-
-    handleUserProfile();
-  }, [user]); 
-
+    if (!loading && user) {
+      handleUserProfile();
+    } else if (!loading && !user) {
+      setProfile(null);
+    }
+  }, [user, loading]);
 
   const fetchProfile = async (userId: string): Promise<Profile | null> => {
     try {
@@ -130,11 +111,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   ): Promise<Profile | null> => {
     try {
       const profileData = {
-        id: user.id,
+        id: user.id, 
         full_name:
-          additionalData.full_name || user.email?.split("@")[0] || "New User",
+          additionalData.full_name ||
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split("@")[0] ||
+          "New User",
         role: additionalData.role || "organizer",
-        avatar_url: user.user_metadata?.avatar_url || null,
+        avatar_url:
+          user.user_metadata?.avatar_url || user.user_metadata?.picture || null,
       };
       const { data, error } = await supabase
         .from("profiles")
