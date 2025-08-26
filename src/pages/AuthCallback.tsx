@@ -1,68 +1,18 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Camera } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-
-        if (error) {
-          console.error("Auth callback error:", error);
-          navigate("/auth?error=callback_failed");
-          return;
-        }
-
-        if (data.session) {
-          const { data: profile, error: profileError } = await supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", data.session.user.id)
-            .single();
-
-          if (profileError && profileError.code === "PGRST116") {
-          
-
-            const role = localStorage.getItem("signup_role") || "organizer";
-            localStorage.removeItem("signup_role");
-            const { error: createError } = await supabase
-              .from("profiles")
-              .insert({
-                id: data.session.user.id,
-                full_name:
-                  data.session.user.user_metadata?.full_name ||
-                  data.session.user.user_metadata?.name ||
-                  data.session.user.email?.split("@")[0] ||
-                  "User",
-                avatar_url:
-                  data.session.user.user_metadata?.avatar_url ||
-                  data.session.user.user_metadata?.picture ||
-                  null,
-                role: role, // 3. Use the role we retrieved
-              });
-
-            if (createError) {
-              console.error("Error creating profile:", createError);
-            }
-          }
-
-          navigate("/dashboard");
-        } else {
-          navigate("/auth");
-        }
-      } catch (error) {
-        console.error("Unexpected error in auth callback:", error);
-        navigate("/auth?error=unexpected");
-      }
-    };
-
-    handleAuthCallback();
-  }, [navigate]);
+    if (!loading && user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, loading, navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

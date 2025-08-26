@@ -4,15 +4,13 @@ import { useAuth } from "../contexts/AuthContext";
 interface GoogleSignInButtonProps {
   mode: "signin" | "signup";
   disabled?: boolean;
-  role?: string; 
-
+  role?: string;
 }
 
 const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   mode,
   disabled,
-  role, 
-
+  role,
 }) => {
   const { signInWithGoogle } = useAuth();
 
