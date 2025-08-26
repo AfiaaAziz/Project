@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   ): Promise<Profile | null> => {
     try {
       const profileData = {
-        id: user.id, 
+        id: user.id,
         full_name:
           additionalData.full_name ||
           user.user_metadata?.full_name ||
