@@ -1,34 +1,64 @@
 import React, { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // Add useLocation
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Camera } from "lucide-react";
-import { useAuth } from "../contexts/AuthContext";
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
-  const location = useLocation(); // Get URL params
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const error = params.get("error");
-    const errorDescription = params.get("error_description");
+    const handleAuthCallback = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
 
-    if (error) {
-      console.error("Auth error:", errorDescription);
-      // Redirect back to auth page with error message
-      navigate(
-        `/auth?error=${encodeURIComponent(
-          errorDescription || "Authentication failed"
-        )}`
-      );
-      return;
-    }
+        if (error) {
+          console.error("Auth callback error:", error);
+          navigate("/auth?error=callback_failed");
+          return;
+        }
 
-    if (!loading && user) {
-      navigate("/dashboard", { replace: true });
-    }
-  }, [user, loading, navigate, location.search]);
+        if (data.session) {
+          const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", data.session.user.id)
+            .single();
+
+          if (profileError && profileError.code === "PGRST116") {
+            const { error: createError } = await supabase
+              .from("profiles")
+              .insert({
+                id: data.session.user.id,
+                full_name:
+                  data.session.user.user_metadata?.full_name ||
+                  data.session.user.user_metadata?.name ||
+                  data.session.user.email?.split("@")[0] ||
+                  "User",
+                avatar_url:
+                  data.session.user.user_metadata?.avatar_url ||
+                  data.session.user.user_metadata?.picture ||
+                  null,
+                role: "organizer",
+              });
+
+            if (createError) {
+              console.error("Error creating profile:", createError);
+            }
+          }
+
+          navigate("/dashboard");
+        } else {
+          navigate("/auth");
+        }
+      } catch (error) {
+        console.error("Unexpected error in auth callback:", error);
+        navigate("/auth?error=unexpected");
+      }
+    };
+
+    handleAuthCallback();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

@@ -19,12 +19,14 @@ interface Profile {
   updated_at: string;
 }
 
+// Interface for Context (remove return type from signOut)
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
-  signOut: () => Promise<void>;
+  signOut: () => Promise<void>; // Should be Promise<void>
+  // Add other functions if they are part of the context
   signIn: (email: string, password: string) => Promise<any>;
   signUp: (
     email: string,
@@ -74,29 +76,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     getInitialSession();
   }, []);
 
+  // Set up auth state change listener (sync callback only)
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
       setSession(newSession);
-      const currentUser = newSession?.user ?? null;
-      setUser(currentUser);
-      if (_event === "SIGNED_IN" && currentUser) {
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", currentUser.id)
-          .single();
-        if (!existingProfile) {
-          const role = localStorage.getItem("signup_role") || "organizer";
-          localStorage.removeItem("signup_role");
-
-          const newProfile = await createProfile(currentUser, { role });
-          if (newProfile) {
-            setProfile(newProfile); // Immediately update the context's profile state
-          }
-        }
-      }
+      setUser(newSession?.user ?? null);
     });
 
     return () => {
@@ -104,12 +90,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, []);
 
+  // Separate effect to fetch profile when user changes (async OK here)
   useEffect(() => {
-    if (user && !profile) {
+    if (user) {
       fetchProfile(user.id).then((profileData) => {
         setProfile(profileData);
       });
-    } else if (!user) {
+    } else {
       setProfile(null);
     }
   }, [user]);
@@ -137,10 +124,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const profileData = {
         id: user.id,
         full_name:
-          user.user_metadata?.full_name ||
-          additionalData.full_name ||
-          user.email?.split("@")[0] ||
-          "New User",
+          additionalData.full_name || user.email?.split("@")[0] || "New User",
         role: additionalData.role || "organizer",
         avatar_url: user.user_metadata?.avatar_url || null,
       };
@@ -209,7 +193,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: ${window.location.origin}/auth/callback,
         },
       });
       if (error) throw error;

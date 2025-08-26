@@ -4,29 +4,21 @@ import { useAuth } from "../contexts/AuthContext";
 interface GoogleSignInButtonProps {
   mode: "signin" | "signup";
   disabled?: boolean;
-  role?: string;
 }
 
 const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
   mode,
   disabled,
-  role,
 }) => {
   const { signInWithGoogle } = useAuth();
 
   const handleGoogleSignIn = async () => {
-    if (mode === "signup" && role) {
-      localStorage.setItem("signup_role", role);
-    }
     try {
       await signInWithGoogle();
     } catch (error) {
       console.error("Google Sign In failed", error);
     }
   };
-
-  const buttonText =
-    mode === "signin" ? "Sign in with Google" : "Sign up with Google";
 
   return (
     <button
@@ -54,7 +46,7 @@ const GoogleSignInButton: React.FC<GoogleSignInButtonProps> = ({
         ></path>
         <path fill="none" d="M0 0h48v48H0z"></path>
       </svg>
-      {buttonText}
+      Sign in with Google
     </button>
   );
 };
