@@ -9,7 +9,6 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 import toast from "react-hot-toast";
 
-// Interface for Profile (keep as is)
 interface Profile {
   id: string;
   full_name: string;
@@ -19,14 +18,12 @@ interface Profile {
   updated_at: string;
 }
 
-// Interface for Context (remove return type from signOut)
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   session: Session | null;
   loading: boolean;
-  signOut: () => Promise<void>; // Should be Promise<void>
-  // Add other functions if they are part of the context
+  signOut: () => Promise<void>; 
   signIn: (email: string, password: string) => Promise<any>;
   signUp: (
     email: string,
@@ -76,7 +73,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     getInitialSession();
   }, []);
 
-  // Set up auth state change listener (sync callback only)
   useEffect(() => {
     const {
       data: { subscription },
@@ -90,7 +86,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     };
   }, []);
 
-  // Separate effect to fetch profile when user changes (async OK here)
   useEffect(() => {
     if (user) {
       fetchProfile(user.id).then((profileData) => {
@@ -147,7 +142,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setProfile(profileData);
     }
   };
-  // Replace the current signUp function with this original version
   const signUp = async (
     email: string,
     password: string,
@@ -160,7 +154,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         password,
         options: {
           data: {
-            // This data is passed to the trigger that creates the profile
             full_name: fullName,
             role: role,
           },
@@ -193,7 +186,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: ${window.location.origin}/auth/callback,
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       if (error) throw error;
@@ -235,7 +228,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setProfile(null);
       setSession(null);
     } catch (error: any) {
-      // This will now only catch REAL sign-out errors
       toast.error("Failed to sign out.");
       console.error("Sign out error:", error);
     }
